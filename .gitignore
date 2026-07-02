@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Scan outputs — real org data, never commit
+*.json
+findings.json
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp

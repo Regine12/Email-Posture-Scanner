@@ -1,0 +1,29 @@
+Diana — Vulnerability Hunting for Community Organisations
+Copyright (c) 2026 Group D, Virtual Routes Ransomware Defence Summer Bootcamp
+
+EDUCATIONAL & GOOD-FAITH SECURITY RESEARCH LICENCE
+
+Permission is granted to use, study, and modify this software for educational
+purposes and good-faith security research, subject to the following conditions:
+
+1. DEFENSIVE & EDUCATIONAL USE ONLY. This software may be used only to help
+   protect organisations, for learning, and for good-faith security research.
+
+2. NO UNAUTHORISED SCANNING. Active scanning of any system you do not own
+   requires prior, explicit, written authorisation from its owner. Passive checks
+   of public records (e.g. DNS) are permitted. The user is solely responsible for
+   ensuring compliance with all applicable laws, including Dutch computervredebreuk
+   (Art. 138ab Sr) and the GDPR.
+
+3. PROHIBITED USES. Unauthorised access, data exfiltration, credential
+   brute-forcing, and service disruption are strictly prohibited. Any such use
+   immediately voids this licence.
+
+4. NO WARRANTY / NO LIABILITY. The software is provided "AS IS", without warranty
+   of any kind. The authors and affiliated institutions accept no liability for
+   any use of this software.
+
+5. GDPR. If personal data is inadvertently encountered, halt immediately, do not
+   copy it, and report privately to the affected organisation.
+
+By using this software you accept these terms.
