@@ -270,13 +270,13 @@ def analyze_dkim(found_any_selector: bool) -> List[Finding]:
         id="dkim_unconfirmed", severity="low",
         title="DKIM signing not confirmed (limited external visibility)",
         plain="We checked the common DKIM selectors and didn't find one, but DKIM "
-              "can use a private selector name we can't guess from outside — so this "
+              "can use a private selector name we can't guess from outside - so this "
               "is 'not confirmed', not 'definitely missing'.",
         risk="If DKIM really is absent, forwarded legitimate mail can fail checks and "
              "you lose a layer of anti-tampering protection. But many domains that "
              "use DKIM simply use a selector external scanners can't see.",
         fix="Confirm internally whether DKIM is enabled with your email provider. If "
-            "it isn't, turn it on — most providers offer a one-click setup.",
+            "it isn't, turn it on - most providers offer a one-click setup.",
     )]
 
 
