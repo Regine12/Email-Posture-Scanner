@@ -19,6 +19,7 @@ This module is import-safe even if dnspython is missing: it degrades to returnin
 manually-supplied data.
 """
 
+import re
 import smtplib
 import socket
 import ssl
@@ -97,6 +98,31 @@ def _dkim_present(domain: str) -> bool:
     return False
 
 
+def _resolve_spf_redirect(spf_record: str, depth: int = 0) -> str:
+    """
+    RFC 7208: a 'redirect=domain' modifier means enforcement is defined by that
+    OTHER domain's SPF record, not by this one. A record like
+    'v=spf1 redirect=_spf.google.com' has no trailing -all/~all of its own —
+    that is not a gap, it's a pointer. Without following it, we'd wrongly report
+    "no clear enforcement rule" on a domain that is, in fact, strictly enforced.
+
+    We follow up to 2 hops (SPF's own spec limit is on total lookups, not redirect
+    depth specifically, but real-world redirect chains are short) and fall back to
+    the original record if anything goes wrong.
+    """
+    if not spf_record or depth >= 2:
+        return spf_record
+    m = re.search(r"redirect=([^\s]+)", spf_record, re.IGNORECASE)
+    if not m:
+        return spf_record
+    target = m.group(1)
+    target_record = _txt_startswith(target, "v=spf1")
+    if not target_record:
+        return spf_record  # couldn't resolve — analyze the original, don't guess
+    return _resolve_spf_redirect(target_record, depth + 1)
+
+
+
 def _fetch_mta_sts(domain: str):
     """Return (dns_record_or_None, policy_body_or_None)."""
     dns_rec = _txt(f"_mta-sts.{domain}")
@@ -135,7 +161,8 @@ def _check_starttls(mx_host: str) -> Optional[bool]:
 
 def collect(domain: str, domain_sends_mail: bool = True) -> EmailPostureInput:
     """Gather everything the analyzer needs for one domain."""
-    spf = _txt_startswith(domain, "v=spf1")
+    spf_raw = _txt_startswith(domain, "v=spf1")
+    spf = _resolve_spf_redirect(spf_raw) if spf_raw else spf_raw
     dmarc = _txt_startswith(f"_dmarc.{domain}", "v=DMARC1")
     dkim = _dkim_present(domain)
     mta_dns, mta_body = _fetch_mta_sts(domain)
