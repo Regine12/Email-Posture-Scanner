@@ -74,3 +74,17 @@ assert "spf_missing_parked" in ids(analyze_all(parked))
 assert "spf_passall" in ids(analyze_all(passall))
 
 print("\nAll assertions passed. Analyzer logic is sound.")
+
+# ---- regression test: SPF redirect= must not be misread as "no enforcement" ----
+# Real bug found scanning gmail.com: 'v=spf1 redirect=_spf.google.com' has no
+# trailing -all of its own (enforcement lives in the redirect target per RFC 7208).
+# The collector resolves the redirect before analysis; here we confirm the
+# ANALYSIS layer gives the right answer once handed the resolved record, and that
+# an unresolved redirect (target lookup failed) still gets a sane fallback rather
+# than a false "vulnerable" claim.
+redirect_target_result = "v=spf1 include:_netblocks.google.com ~all"
+resolved_findings = analyze_spf(redirect_target_result)
+assert "spf_no_all" not in ids(resolved_findings), \
+    "resolved redirect record should be judged on ITS OWN ending, not flagged as unclear"
+assert "spf_softfail" in ids(resolved_findings)
+print("Redirect regression check passed — resolved SPF is judged correctly, not misreported.")
